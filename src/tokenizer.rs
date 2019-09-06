@@ -2,7 +2,10 @@ use std::iter::Peekable;
 use std::str::Chars;
 
 pub enum Token {
-    Command(Command),
+    Word(Word),
+}
+
+pub struct Word {
 }
 
 #[derive(Debug)]
@@ -26,13 +29,6 @@ impl Tokenizer for String {
     fn tokenize(&self) -> Result<Vec<Token>, Error> {
         let mut chars = self.chars().peekable();
         let mut tokens: Vec<Token> = vec![];
-
-        // first, check if it is a command. If a command is supplied, everythin
-        // after the first matching command is ignored.
-        //if let Ok(cmd) = match_command(&mut chars) {
-            //tokens.push(Token::Command(cmd));
-            //return Ok(tokens);
-        //}
 
         Err(Error::NotImplemented)
     }

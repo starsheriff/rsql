@@ -17,9 +17,14 @@ fn main() {
             .read_line(&mut input_buffer)
             .expect("Could not read line.");
 
+        // check if input buffer is a command. If so, parse the command and
+        // execute it.
         if let Ok(cmd) = tokenizer::match_command(&mut input_buffer) {
-            do_command(cmd);
+            do_command(cmd).unwrap();
+            input_buffer.clear();
+            continue;
         }
+
 
         input_buffer.clear();
     }
@@ -27,9 +32,7 @@ fn main() {
 
 #[derive(Debug)]
 enum CommandError {
-    CommandNotFound,
     NotImplemented,
-    UnknownCommand,
 }
 
 fn do_command(cmd: Command) -> Result<(), CommandError> {
