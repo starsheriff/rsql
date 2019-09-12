@@ -1,10 +1,13 @@
 use std::iter::Peekable;
 use std::str::Chars;
 
+#[derive(Debug, PartialEq)]
 pub enum Token {
     Word(Word),
+    Select,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Word {
 }
 
@@ -30,8 +33,12 @@ impl Tokenizer for String {
         let mut chars = self.chars().peekable();
         let mut tokens: Vec<Token> = vec![];
 
-        Err(Error::NotImplemented)
+        return Ok(tokens)
     }
+}
+
+fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Token, Error> {
+    Err(Error::NotImplemented)
 }
 
 pub fn match_command(input_buffer: &mut str) -> Result<Command, Error> {
@@ -59,5 +66,16 @@ pub fn match_command(input_buffer: &mut str) -> Result<Command, Error> {
             }
         }
         _ => Err(Error::UnknownCommand),
+    }
+}
+
+#[cfg(test)]
+mod test{
+    use super::*;
+
+    #[test]
+    fn a_test() {
+        let tokens = "select".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![]);
     }
 }
