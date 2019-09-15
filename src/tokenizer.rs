@@ -5,6 +5,9 @@ use std::str::Chars;
 pub enum Token {
     Word(Word),
     Select,
+    Equal,
+    Gt,
+    Ls,
 }
 
 #[derive(Debug, PartialEq)]
@@ -33,11 +36,31 @@ impl Tokenizer for String {
         let mut chars = self.chars().peekable();
         let mut tokens: Vec<Token> = vec![];
 
+        while let Some(token) = match_token(&mut chars)? {
+            tokens.push(token);
+        }
+
         return Ok(tokens)
     }
 }
 
-fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Token, Error> {
+fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Option<Token>, Error> {
+    match b.peek() {
+        Some(&ch) => match ch {
+            '=' => {
+                b.next();
+                return Ok(Some(Token::Equal))
+            },
+            '>' => {
+                b.next();
+                return Ok(Some(Token::Gt))
+            },
+            _ => {
+                b.next();
+            },
+        },
+        None => return Ok(None),
+    }
     Err(Error::NotImplemented)
 }
 
@@ -75,7 +98,19 @@ mod test{
 
     #[test]
     fn a_test() {
-        let tokens = "select".to_string().tokenize().unwrap();
-        assert_eq!(tokens, vec![]);
+        let tokens = "=".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::Equal]);
+    }
+
+    #[test]
+    fn multiple_equals() {
+        let tokens = "==".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::Equal, Token::Equal]);
+    }
+
+    #[test]
+    fn multiple_equals_w_whitespace() {
+        let tokens = ">".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::Gt]);
     }
 }
