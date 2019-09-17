@@ -7,7 +7,7 @@ pub enum Token {
     Select,
     Equal,
     Gt,
-    Ls,
+    Lt,
 }
 
 #[derive(Debug, PartialEq)]
@@ -49,19 +49,23 @@ fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Option<Token>, Error> {
         Some(&ch) => match ch {
             '=' => {
                 b.next();
-                return Ok(Some(Token::Equal))
+                Ok(Some(Token::Equal))
             },
             '>' => {
                 b.next();
-                return Ok(Some(Token::Gt))
+                Ok(Some(Token::Gt))
+            },
+            '<' => {
+                b.next();
+                Ok(Some(Token::Lt))
             },
             _ => {
                 b.next();
+                Err(Error::NotImplemented)
             },
         },
-        None => return Ok(None),
+        None => Ok(None),
     }
-    Err(Error::NotImplemented)
 }
 
 pub fn match_command(input_buffer: &mut str) -> Result<Command, Error> {
@@ -112,5 +116,11 @@ mod test{
     fn multiple_equals_w_whitespace() {
         let tokens = ">".to_string().tokenize().unwrap();
         assert_eq!(tokens, vec![Token::Gt]);
+    }
+
+    #[test]
+    fn single_lt() {
+        let tokens = "<".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::Lt]);
     }
 }
