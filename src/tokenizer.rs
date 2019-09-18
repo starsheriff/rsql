@@ -45,19 +45,21 @@ impl Tokenizer for String {
 }
 
 fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Option<Token>, Error> {
+    let consuming_return  = |b: &mut Peekable<Chars<'_>>, t: Token| -> Result<Option<Token>, Error> { 
+        b.next();
+        Ok(Some(t)) 
+    };
+
     match b.peek() {
         Some(&ch) => match ch {
             '=' => {
-                b.next();
-                Ok(Some(Token::Equal))
+                consuming_return(b, Token::Equal)
             },
             '>' => {
-                b.next();
-                Ok(Some(Token::Gt))
+                consuming_return(b, Token::Gt)
             },
             '<' => {
-                b.next();
-                Ok(Some(Token::Lt))
+                consuming_return(b, Token::Lt)
             },
             _ => {
                 b.next();
