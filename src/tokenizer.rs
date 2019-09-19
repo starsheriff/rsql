@@ -8,6 +8,8 @@ pub enum Token {
     Equal,
     Gt,
     Lt,
+    LBrace,
+    RBrace,
 }
 
 #[derive(Debug, PartialEq)]
@@ -61,6 +63,7 @@ fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Option<Token>, Error> {
             '<' => {
                 consuming_return(b, Token::Lt)
             },
+            '{' => consuming_return(b, Token::LBrace),
             _ => {
                 b.next();
                 Err(Error::NotImplemented)
