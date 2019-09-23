@@ -13,8 +13,7 @@ pub enum Token {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Word {
-}
+pub struct Word {}
 
 #[derive(Debug)]
 pub enum Command {
@@ -42,32 +41,28 @@ impl Tokenizer for String {
             tokens.push(token);
         }
 
-        return Ok(tokens)
+        return Ok(tokens);
     }
 }
 
 fn match_token(b: &mut Peekable<Chars<'_>>) -> Result<Option<Token>, Error> {
-    let consuming_return  = |b: &mut Peekable<Chars<'_>>, t: Token| -> Result<Option<Token>, Error> { 
-        b.next();
-        Ok(Some(t)) 
-    };
+    let consuming_return =
+        |b: &mut Peekable<Chars<'_>>, t: Token| -> Result<Option<Token>, Error> {
+            b.next();
+            Ok(Some(t))
+        };
 
     match b.peek() {
         Some(&ch) => match ch {
-            '=' => {
-                consuming_return(b, Token::Equal)
-            },
-            '>' => {
-                consuming_return(b, Token::Gt)
-            },
-            '<' => {
-                consuming_return(b, Token::Lt)
-            },
+            '=' => consuming_return(b, Token::Equal),
+            '>' => consuming_return(b, Token::Gt),
+            '<' => consuming_return(b, Token::Lt),
             '{' => consuming_return(b, Token::LBrace),
+            '}' => consuming_return(b, Token::RBrace),
             _ => {
                 b.next();
                 Err(Error::NotImplemented)
-            },
+            }
         },
         None => Ok(None),
     }
@@ -92,7 +87,7 @@ pub fn match_command(input_buffer: &mut str) -> Result<Command, Error> {
             }
 
             match buffer.to_lowercase().as_ref() {
-                "q"  => Ok(Command::Quit),
+                "q" => Ok(Command::Quit),
                 "h" => Ok(Command::Help),
                 _ => Err(Error::UnknownCommand),
             }
@@ -102,7 +97,7 @@ pub fn match_command(input_buffer: &mut str) -> Result<Command, Error> {
 }
 
 #[cfg(test)]
-mod test{
+mod test {
     use super::*;
 
     #[test]
@@ -127,5 +122,17 @@ mod test{
     fn single_lt() {
         let tokens = "<".to_string().tokenize().unwrap();
         assert_eq!(tokens, vec![Token::Lt]);
+    }
+
+    #[test]
+    fn single_rbrace() {
+        let tokens = "}".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::RBrace]);
+    }
+
+    #[test]
+    fn single_lbrace() {
+        let tokens = "{".to_string().tokenize().unwrap();
+        assert_eq!(tokens, vec![Token::LBrace]);
     }
 }
